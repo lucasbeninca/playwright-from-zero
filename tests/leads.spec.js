@@ -14,8 +14,11 @@ test('deve cadastrar um lead na fila de espera', async ({ page }) => {
 
   await page.getByRole('button', {name: /Aperte o play... se tiver coragem/}).click();
 
-  await page.getByPlaceholder('Seu nome completo').fill('usuario-teste')
+  expect(page.getByTestId('modal').getByRole('heading')).toHaveText('Fila de espera')
 
+  //Fila de espera
+
+  await page.getByPlaceholder('Seu nome completo').fill('usuario-teste')
   await page.locator('#email').fill('teste@gmail.com')
 
   await page.getByRole('button', {name: /Quero entrar na fila!/}).click()

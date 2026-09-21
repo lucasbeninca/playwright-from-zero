@@ -122,3 +122,43 @@ await page.locator('#email').fill('teste@gmail.com');
 O seletor CSS `#email` identifica o elemento com `id="email"`, e `fill()` preenche o campo. Outros exemplos de seletores CSS são `.classe` e `input[type="email"]`.
 
 Referência: [locator na documentação do Playwright](https://playwright.dev/docs/api/class-page#page-locator).
+
+### `expect(page.getByTestId('modal').getByRole('heading'))`
+
+Essa expressão prepara uma verificação sobre um título dentro do modal:
+
+- `page.getByTestId('modal')` localiza, por padrão, o elemento com `data-testid="modal"`.
+- `.getByRole('heading')` busca títulos, como `<h1>` a `<h6>`, apenas dentro desse elemento.
+- `expect(...)` recebe o localizador para realizar uma asserção.
+
+Exemplo ilustrativo de HTML:
+
+```html
+<div data-testid="modal">
+  <h2>Cadastro realizado!</h2>
+</div>
+```
+
+**A expressão sozinha não valida nada:** é necessário completar com uma asserção, como `toBeVisible()` ou `toHaveText()`, e usar `await`:
+
+```javascript
+await expect(page.getByTestId('modal').getByRole('heading')).toBeVisible();
+
+await expect(page.getByTestId('modal').getByRole('heading'))
+  .toHaveText('Cadastro realizado!');
+```
+
+O primeiro exemplo verifica a visibilidade; o segundo verifica o texto. O Playwright repete essas verificações até que passem ou atinjam o timeout.
+
+Se houver vários títulos no modal, refine a busca pelo nome acessível:
+
+```javascript
+await expect(
+  page.getByTestId('modal').getByRole('heading', {
+    name: 'Cadastro realizado!',
+    exact: true
+  })
+).toBeVisible();
+```
+
+Referências: [localizadores](https://playwright.dev/docs/locators) e [asserções](https://playwright.dev/docs/test-assertions) na documentação do Playwright.
