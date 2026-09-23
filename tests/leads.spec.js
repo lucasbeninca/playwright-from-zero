@@ -1,7 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test('valida se a pagina inicial carregou', async({page}) => {
+test('valida se a pagina inicial carregou', async ({ page }) => {
   await page.goto('http://localhost:3000/');
 
   // Expect a title "to contain" a substring.
@@ -12,17 +12,27 @@ test('valida se a pagina inicial carregou', async({page}) => {
 test('deve cadastrar um lead na fila de espera', async ({ page }) => {
   await page.goto('http://localhost:3000/');
 
-  await page.getByRole('button', {name: /Aperte o play... se tiver coragem/}).click();
+  await page.getByRole('button', { name: /Aperte o play... se tiver coragem/ }).click();
 
-  expect(page.getByTestId('modal').getByRole('heading')).toHaveText('Fila de espera')
+  expect(page.getByTestId('modal').getByRole('heading')).toHaveText('Fila de espera');
+  await page.getByPlaceholder('Seu nome completo').fill('usuario-teste');
+  await page.locator('#email').fill('teste@gmail.com');
 
-  //Fila de espera
+  await page.getByTestId('modal').getByText('Quero entrar na fila!').click();
+ 
+  // ====================================================
+  // para pegar o html de um content
+  // await page.getByText('seus dados conosco').click()
+  // const content = await page.content()
+  // console.log(content)
+  // ====================================================
 
-  await page.getByPlaceholder('Seu nome completo').fill('usuario-teste')
-  await page.locator('#email').fill('teste@gmail.com')
+  const message = 'Agradecemos por compartilhar seus dados conosco. Em breve, nossa equipe entrará em contato!'
+  await expect(page.locator('.toast')).toHaveText(message)
 
-  await page.getByRole('button', {name: /Quero entrar na fila!/}).click()
+  await expect(page.locator('.toast')).toBeHidden({timeout: 5000})
 
 
+  await page.waitForTimeout(5000);
 
 })
